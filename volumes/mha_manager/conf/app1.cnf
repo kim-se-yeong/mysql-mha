@@ -1,0 +1,39 @@
+[server default]
+#mysql user
+user=root
+password=tpdud1!
+
+#ssh user
+ssh_user=root
+
+#replication user
+repl_user=myslave
+repl_password=myslave
+
+# mha 매니저의 실행 정보를 저장하는 디렉토리
+manager_workdir=/masterha/app1
+# mha 매니저 로그 파일
+manager_log=/masterha/app1/app1.log
+
+# mysql 서버의 실행 디렉토리
+#remote mha log
+remote_workdir=/masterha/app1
+#binary bin log path
+master_binlog_dir=/var/lib/mysql
+
+master_ip_failover_script=/root/script/master_ip_failover
+master_ip_online_change_script=/root/script/master_ip_online_change
+# secondary_check_script=/usr/local/bin/masterha_secondary_check -s mha4mysql-master -s mha4mysql-slave-01 -s mha4mysql-slave-02 --user=root --master_host=mha4mysql-master --master_ip=mha4mysql-master --master_port=3306
+
+[server1]
+hostname=mha4mysql-master
+# master 후보로 설정하는 정보
+candidate_master=1
+
+[server2]
+hostname=mha4mysql-slave-01
+candidate_master=1
+
+[server3]
+hostname=mha4mysql-slave-02
+candidate_master=1

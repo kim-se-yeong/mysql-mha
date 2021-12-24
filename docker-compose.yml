@@ -1,0 +1,93 @@
+version: '3'
+services:
+  manager:
+    image: s3y2onz/manager:1.0
+    container_name: mha4mysql-manager
+    stdin_open: true
+    tty: true
+    privileged: true
+    environment:
+      - CONTAINER_NAME=mha_manager
+    env_file:
+        ./manager/conf/.manager.env
+    volumes:
+      - "./script:/root/script"
+      - "./volumes/mha_manager/conf:/masterha/app1/"
+      - "./volumes/mha_share/:/root/mha_share/"
+    depends_on:
+      - master
+      - slave-01
+      - slave-02
+    networks:
+      cranberry:
+        ipv4_address: 172.30.0.10
+    restart: always
+
+  master:
+    image: s3y2onz/node:1.0
+    container_name: mha4mysql-master
+    stdin_open: true
+    tty: true
+    privileged: true
+    environment:
+      - CONTAINER_NAME=mha_master
+    env_file:
+      ./node/conf/.node.env
+    volumes:
+      - "./script:/root/script"
+      - "./volumes/mha_share/:/root/mha_share/"
+      - "./volumes/mha_master/conf/:/etc/mysql/conf.d/"
+    networks:
+      cranberry:
+        ipv4_address: 172.30.0.11
+    restart: always
+
+  slave-01:
+    image: s3y2onz/node:1.0
+    container_name: mha4mysql-slave-01
+    stdin_open: true
+    tty: true
+    privileged: true
+    environment:
+      - CONTAINER_NAME=mha_slave_01
+    env_file:
+      ./node/conf/.node.env
+    volumes:
+      - "./script:/root/script"
+      - "./volumes/mha_share/:/root/mha_share/"
+      - "./volumes/mha_slave_01/conf/:/etc/mysql/conf.d/"
+    depends_on:
+      - master
+    networks:
+      cranberry:
+        ipv4_address: 172.30.0.12
+    restart: always
+
+  slave-02:
+    image: s3y2onz/node:1.0
+    container_name: mha4mysql-slave-02
+    stdin_open: true
+    tty: true
+    privileged: true
+    environment:
+      - CONTAINER_NAME=mha_slave_02
+    env_file:
+      ./node/conf/.node.env
+    volumes:
+      - "./script:/root/script"
+      - "./volumes/mha_share/:/root/mha_share/"
+      - "./volumes/mha_slave_02/conf/:/etc/mysql/conf.d/"
+    depends_on:
+      - master
+    networks:
+      cranberry:
+        ipv4_address: 172.30.0.13
+    restart: always
+
+networks:
+  cranberry:
+   driver: bridge
+   ipam:
+    config:
+      - subnet: 172.30.0.0/16
+        gateway: 172.30.0.1

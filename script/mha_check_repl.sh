@@ -1,0 +1,1 @@
+docker exec -it mha4mysql-manager masterha_check_repl  --conf=/masterha/app1/app1.cnf

@@ -1,0 +1,7 @@
+mysql -u root -p$MYSQL_ROOT_PASSWORD <<EOSQL
+GRANT ALL ON *.* TO myuser@'172.30.0.%' IDENTIFIED BY 'mypass';
+FLUSH PRIVILEGES;
+GRANT REPLICATION SLAVE ON *.* TO 'myslave'@'172.30.0.%' IDENTIFIED BY 'myslave';
+FLUSH PRIVILEGES;
+reset master;
+EOSQL
